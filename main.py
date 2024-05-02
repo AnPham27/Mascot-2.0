@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 from schedule import get_upcoming_schedule
 from standings import standings
+from field_status import status
 
 logger = settings.logging.getLogger("bot")
 
@@ -48,6 +49,21 @@ def run():
         """
         table, message = standings(division.lower().replace(' ', ''))
         await ctx.send(table)
+        await ctx.send(message)
+
+    #!field division - (no @everyone) responds to same text channel with current standings     
+    @bot.command(
+            help="I am still under development!",
+            description="Posting the field status from City of Guelph site",
+            brief="Posts field status",
+            hidden=True
+    )
+    async def field(ctx):
+        """
+        Current field status to same channel: 
+        FORMAT: !field
+        """
+        message = status()
         await ctx.send(message)
 
   
