@@ -31,7 +31,7 @@ def run():
         """
         
         message = get_upcoming_schedule(division, day, month, date, team_num)
-
+        
         await ctx.send(message)
         
 
