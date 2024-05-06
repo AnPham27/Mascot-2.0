@@ -2,27 +2,45 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import date
 import calendar
-  
+
+def find_day(division, soup):
+
+    if division in ("b7", "b2", "c", "c2"):
+
+        day = soup.find("div", class_="d-flex justify-content-between border-bottom fw-bold pb-1").find_all("div")
+        
+    if division in ("ct", "b2/c1"):
+        day = soup.find_all("td", class_="xl7725052")
+
+    
+    return day
+
+    
 def find_time_slot(todays_games, team_num, division):
     
     if division == "b7":
 
-        time_slot = 1 #first time slot
+        time_slot = 2 #first time slot
 
         for i in range(1):
             if f'{team_num}' in todays_games[i]:
-                time_slot = 0
-                print("meep")
+                #[['Monday, May 6', 'Centennial Soccer Dome', '2', '5'], 'White', 'White']
+                if f'{team_num}' in todays_games[i][2] or f'{team_num}' in todays_games[i][3]:
+                    time_slot = 0
+                    print("yuh")
+                elif f'{team_num}' in todays_games[i][5] or f'{team_num}' in todays_games[i][4]:
+                    time_slot = 1 # second time slot 
+                    print("meep")
+
+                
                 return time_slot
     return time_slot
 
 def find_team_dictionary(division, soup):
+    numbers = []
+    teams = []
 
     if division in ("b7", "b2", "c", "c2"):
-        
-        numbers = []
-        teams = []
-
 
         numbers = soup.find("table", class_="ms-sm-auto").find_all(class_="team-num")
         teams = soup.find("table", class_="ms-sm-auto").find_all("a")
@@ -41,6 +59,14 @@ def find_team_dictionary(division, soup):
             # Append data from the second column to the existing lists
             numbers.extend(numbers_second_column)
             teams.extend(teams_second_column)
+        
+    if division == "ct":
+        numbers = soup.find("table").find_all(class_="xl7525052")
+        teams = soup.find("table").find_all(class_="xl7425052")
+    
+    if division == "b2/c1":
+        numbers = soup.find("table").find_all(class_="xl7525052")
+        teams = soup.find("table").find_all(class_="xl6926374")
 
     number = []
     team = []
@@ -49,12 +75,20 @@ def find_team_dictionary(division, soup):
         number.append(i.text)
 
     for i in teams:
-        
-        team.append(i.text.replace("The ", ''))
+        team.append(i.text.replace("The ", '').replace('Team ', ''))
 
     dictionary = dict(zip(number, team))
+    
+    if division == "ct":
+        dictionary['12'] = 'The Sackler Family Team for Evidence-Based Frisbee'
+        dictionary.popitem()
+        dictionary['13'] = 'The Frizzly Bears'
+        #this site is not right. excuse this please 
+    
+    if division == "c":
+        dictionary['7'] = "Team Dump Truck"
+    
     print(dictionary)
-
     return dictionary
 
 def find_time_index(time_dictionary, today_date, todays_games, team_num, division):
@@ -65,16 +99,24 @@ def find_time_index(time_dictionary, today_date, todays_games, team_num, divisio
 
     if division == "b7":
 
-            #if there are more than 1 games that day
+        #if there are more than 1 games that day
         if len(time_dictionary[today_date]) > 1:
             # if flagged, take second time group 
             time_slot = find_time_slot(todays_games, team_num, division)
-            #if 0 = first time slot, if 1 = second time slots
+            #if 0 = first time slot, if 1 = second time slot, 2 = third time slot
 
             if time_slot == 1:
                 time_index = []
-                time_index.append(2)
+                time_index.append(1)
                 #time_index.append(3)
+            
+            if time_slot == 2:
+                time_index=[]
+                time_index.append(2)
+            
+            #if time_slot == 0:
+                
+                
 
             
             
@@ -198,7 +240,7 @@ def find_opponents(division, soup, days, field_num):
     return sub_array, split_arrays
 
 def colour(division, team_num, first, second):
-
+    flag = 0
     #they play 1 game in the night
     if division == "b7":
         if not first:
@@ -219,6 +261,8 @@ def colour(division, team_num, first, second):
                 colour = 'White'
                 
                 first.append(colour)
+            flag = 1
+
             
     if first:
         if f'{team_num}' == first[0][2]:
@@ -240,7 +284,7 @@ def colour(division, team_num, first, second):
             second_colour = 'White'
             second.append(second_colour)
   
-    return first, second
+    return first, second, flag
             
 
 
@@ -272,21 +316,21 @@ def get_upcoming_schedule(division, day, month, date, team_num):
     #print(soup.prettify())
 
     today_date = f"{day} {month} {date}"
-    
+    print(today_date)
     #lists team number and name 
     dictionary = find_team_dictionary(division, soup)
 
-    
+    day = find_day(division, soup)
     #day = soup.find("table").find_all("th", id="week_header")
-    day = soup.find("div", class_="d-flex justify-content-between border-bottom fw-bold pb-1").find_all("div")
+    print(day)
     days = []
 
-
     for i in day:
-        if not (i.text).startswith("Week"):
+        print(i.text)
+        if not (i.text).startswith("Week "):
             days.append(i.text)
         
-    
+    print(days)
     
     #need to set playoff dates
     playoff = ["Monday, June 24", "Tuesday, June 25", "Wednesday, June 26", "Thursday, June 27"]
@@ -347,23 +391,37 @@ def get_upcoming_schedule(division, day, month, date, team_num):
     # Initialize a list to store the current group of times
     current_group = []
 
-    for time in times:
+    if division == "b7":
+        for time in times:
         #check if the time starts with '6' (for 6pm)
-        if time.startswith('6') or (time.startswith('7') and division=="b7"):
-            #if the current group is not empty, append it to scheduled_time
-            if current_group:
-                scheduled_time.append(current_group)
-            #start a new group with the current time
-            current_group = [time]
-        else:
-            #append the current time to the current group
-            current_group.append(time)
+            if time.startswith('6') or time.startswith('7'):
+                #if the current group is not empty, append it to scheduled_time
+                if current_group:
+                    scheduled_time.append(current_group)
+                #start a new group with the current time
+                current_group = [time]
+            else:
+                #append the current time to the current group
+                current_group.append(time)
+    else:
+
+        for time in times:
+            #check if the time starts with '6' (for 6pm)
+            if time.startswith('6'):
+                #if the current group is not empty, append it to scheduled_time
+                if current_group:
+                    scheduled_time.append(current_group)
+                #start a new group with the current time
+                current_group = [time]
+            else:
+                #append the current time to the current group
+                current_group.append(time)
 
     #append the last group to scheduled_time if it's not empty
     if current_group:
         scheduled_time.append(current_group)
 
-    #print(current_games)
+  
     #print(scheduled_time)
 
     time_dictionary = dict(zip(days, scheduled_time))
@@ -372,10 +430,10 @@ def get_upcoming_schedule(division, day, month, date, team_num):
     #print(time_dictionary)
     time_index = find_time_index(time_dictionary, today_date, todays_games, team_num, division)
     
-    print(time_index)
+    print("time index", time_index)
     first = []
     second = []
-
+    flag = 0 
 
     for i in range (len(current_games)):
         for j in range (len(current_games[0])):
@@ -387,14 +445,18 @@ def get_upcoming_schedule(division, day, month, date, team_num):
                 second.append(current_games[i])
 
 
-    first, second = colour(division, team_num, first, second)
+    first, second, flag = colour(division, team_num, first, second)
+
 
 
     print(first)
     
     print(second)
-    print(times)
-    print(time_dictionary)
+    print("times", times)
+
+    print("Time dictionary: ", time_dictionary)
+    
+    #print(time_dictionary)
     #[['Thursday, August 10', 'Margaret # 4', '1', '12', '12', '9'], 'Dark', 'White', time]
     # DATE, Field #, LEFT , RIGHT, LEFT, RIGHT 
     # 0  ,    1 ,     2,     3 ,    4 ,   5
