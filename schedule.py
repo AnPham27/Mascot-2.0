@@ -130,8 +130,16 @@ def find_field_num(division, soup):
         field_num = soup.find_all("a", target="_blank")
         for i in field_num:
             nums.append(i.text)
-           
 
+    if division in ("ct", "b2/c1"):
+        nums = []
+
+        field_num = soup.find_all(class_="xl7625052", style="height:12.75pt;border-top:none")
+
+        for i in field_num:
+            nums.append(i.text.replace("\r\n ", ""))
+           
+        print(nums)
     return nums
 
 def find_game_header(division, soup):
@@ -162,16 +170,16 @@ def find_game_header(division, soup):
     return times
 
 def find_opponents(division, soup, days, field_num):
-    opponent = soup.find("tbody").find_all_next("a", class_="team-link")
-    opponents = []
-    count = 0
-    for i in opponent:
-        #opponents.append(days[len(opponents)])
-        opponents.append(i.text) 
-        count+= 1  
+
     #['Thursday, August 10', 'Margaret # 4', '1', '12', '12', '9'], 'Dark', 'White']
     if division == ("b7"):
- 
+        opponent = soup.find("tbody").find_all_next("a", class_="team-link")
+        opponents = []
+        count = 0
+        for i in opponent:
+            #opponents.append(days[len(opponents)])
+            opponents.append(i.text) 
+            count+= 1  
         #print(opponents)
         #['1', '4', '2', '5', '3', '6']
         count = 0
@@ -205,7 +213,14 @@ def find_opponents(division, soup, days, field_num):
         #print(split_arrays)
     
     if division in ("b2", "c", "c2"):
-         
+        opponent = soup.find("tbody").find_all_next("a", class_="team-link")
+        opponents = []
+        count = 0
+        for i in opponent:
+            #opponents.append(days[len(opponents)])
+            opponents.append(i.text) 
+            count+= 1
+            print(i.text.replace("\xa0", ""))
         #print(opponents)
         #['1', '4', '2', '5', '3', '6']
         count = 0
@@ -237,6 +252,50 @@ def find_opponents(division, soup, days, field_num):
             group.insert(0, days[i // 8])
         
     
+    if division in ("ct", "b2/c1"):
+        opponents = []
+        index_0 = soup.find_all(class_="xl8225052", style="border-left:none")
+        index_1 = soup.find_all(class_="x18225052", style="border-left:none")
+        index_2 = soup.find_all(class_="x17025052", style="border-left:none")
+        index_3 =soup.find_all(class_="x18025052", style="border-left:none")
+
+        
+        # index_0.extend(index_1)
+        # index_0.extend(index_2)
+        # index_0.extend(index_3)
+
+        for i in index_0:
+            #opponents.append(days[len(opponents)])
+            # opponents.append(i.text.replace("\xa0", "")) 
+            print(i.text.replace("\xa0", ""))
+
+        split_arrays = []
+        chunk_size = 4
+        n = len(opponents)
+
+
+        for i in range(0, n, chunk_size):
+            sub_array = []
+
+            for j in range(i, min(i + chunk_size, n)):
+                
+                sub_array.append(opponents[j])
+            
+
+            #sub_array.insert(0, days[count])
+            split_arrays.append(sub_array)
+    
+        #date each game: 
+        # DATE, Field #, LEFT , RIGHT, LEFT, RIGHT 
+        # 0  ,    1 ,     2,     3 ,    4 ,   5
+        for i, group in enumerate(split_arrays):
+            field_index = i % len(field_num)
+            group.insert(0, field_num[field_index])
+            group.insert(0, days[i // 8])
+
+
+    print(sub_array)
+    print(split_arrays)
     return sub_array, split_arrays
 
 def colour(division, team_num, first, second):
