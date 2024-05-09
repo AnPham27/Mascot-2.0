@@ -25,6 +25,6 @@ def status():
         if i.text == '.': 
             break
 
-    sent = sent.replace("<strong>", "").replace("</strong>", "")
+    sent = sent.replace("<strong>", "**").replace("</strong>", "**")
     return sent
     
