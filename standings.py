@@ -48,9 +48,9 @@ def standings(division):
         
     #no spirit score yet ~ less than 24 hours
 
-    if len(point) == (len(names) * 4):
+    if len(point) == (len(names) * 5):
         count = 0
-        total_num_scores = 4
+        total_num_scores = 5
         total_scores = len(names) * total_num_scores
         result = []
 
@@ -77,12 +77,11 @@ def standings(division):
             #[team , W, L, T, P]
         for r in row:
             chart += f"{place:<3} {r[0][:17].strip():<17} {r[1]:<2} {r[2]:<2} {r[4]:<6}\n"
-
-            if waiting == True:
-                message+= "Please note: Not all scores have been submitted at this moment. Check again later!"
-
-    
+            place +=1 
         chart += "```"
+        if waiting == True:
+            message+= "Please note: Not all scores have been submitted at this moment. Check again later!"
+
 
     #spirit points are available
     else:
@@ -114,10 +113,9 @@ def standings(division):
             #[team , W, L, T, P]
         for r in row:
             chart += f"{place:<3} {r[0][:17].strip():<17} {r[1]:<2} {r[2]:<2} {r[5]:<6}\n"
-
-            message += "\nPlease note: Not all scores have been submitted at this moment. Please check again later!"
-
             place += 1
         chart += "```"
+        if waiting == True:
+            message+= "Please note: Not all scores have been submitted at this moment. Check again later!"
     
     return(chart, message)

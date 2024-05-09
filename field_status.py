@@ -15,13 +15,15 @@ def status():
     source.raise_for_status()
     soup = BeautifulSoup(source.text, 'html.parser')
 
-    statement = soup.find(id="primary", class_="site-content").find("p")
-
+    statement = (soup.find(id="primary", class_="site-content").find_next("p")).find_next_sibling("p")
+    
     stat = []
     sent = ""
 
     for i in statement:
-        sent += f"{i}"
+        sent += i.text
+        if i.text == '.': 
+            break
 
     sent = sent.replace("<strong>", "").replace("</strong>", "")
     return sent
