@@ -200,7 +200,7 @@ def standings(division):
             place += 1
         chart += "```"
         
-        message = "Please note: Not all scores have been submitted at this moment. Check again later!"
+        message = "Please note that not all scores have been submitted at this moment. Check again later!"
 
     #   Win  Loss  Tie  Points count = 4
     else:
@@ -228,6 +228,6 @@ def standings(division):
             place += 1
         chart += "```"
         
-        message+= "Please note: Not all scores have been submitted at this moment. Check again later!"
+        message = "Please note that not all scores have been submitted at this moment. Check again later!"
 
     return chart, message
