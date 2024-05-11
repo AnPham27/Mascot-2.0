@@ -144,23 +144,12 @@ def standings(division):
 
 
     teams = soup.find("tbody").find_all("a")
-
-    waiting = False
     names = []
 
     for i in teams:
         #shorten team names to abbreviations 
         names.append((i.text).replace("The ", '').replace("Birthday", "Bday").replace("With", "W/"))
-        
-        next_element = i.next_sibling.strip()
-        #print(next_element)
-
-    updated = soup.find(class_="bottomLine").find_all("p")
-    for msg in updated:
-        if "**" in msg.text:
-            waiting = True         
     
-    print(names)
     scores = soup.find("tbody").find_all("td", class_="text-center")
 
     points = []
@@ -174,7 +163,7 @@ def standings(division):
     for head in heading: 
         labels.append(head.text)
         count += 1
-    print(labels)
+
 
     for i in scores:
         points.append(i.text)
@@ -197,23 +186,21 @@ def standings(division):
             row.append(result)
             result=[] 
 
-
-
         labels = ["PL", "TEAM", "W", "L", "SPRT"]
         #headers = ['PL', 'TEAM', 'W', 'L', 'POINT']
 
         header_format = '{:<3} {:<17} {:<2} {:<2} {:<6}'
 
         chart = f"```\n{header_format.format(*labels)}\n"
-        message = ""
+        
         place = 1
             #[team , W, L, T, P]
         for r in row:
             chart += f"{place:<3} {r[0][:17].strip():<17} {r[1]:<2} {r[2]:<2} {r[6][:4]:<6}\n"
             place += 1
         chart += "```"
-        if waiting == True:
-            message += "Please note: Not all scores have been submitted at this moment. Check again later!"
+        
+        message = "Please note: Not all scores have been submitted at this moment. Check again later!"
 
     #   Win  Loss  Tie  Points count = 4
     else:
@@ -234,14 +221,13 @@ def standings(division):
         header_format = '{:<3} {:<17} {:<2} {:<2} {:<6}'
 
         chart = f"```\n{header_format.format(*labels)}\n"
-        message = ""
         place = 1
             #[team , W, L, T, P]
         for r in row:
             chart += f"{place:<3} {r[0][:17].strip():<17} {r[1]:<2} {r[2]:<2} {r[4][:3]:<6}\n"
             place += 1
         chart += "```"
-        if waiting == True:
-            message+= "Please note: Not all scores have been submitted at this moment. Check again later!"
+        
+        message+= "Please note: Not all scores have been submitted at this moment. Check again later!"
 
     return chart, message
