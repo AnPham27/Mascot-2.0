@@ -49,6 +49,7 @@ def play(division, day, month, date):
     today_date = f"{day} {month} {date}"
     current_games = find_day(today_date, soup)
 
+
     #['1', 'Thu, May 09', 'Frizzie McGuire(0-0-0) (0.00)', '', 'Margaret # 7', '6:30 PM', 'Light']
 
     message  = f"{today_date}: Our first game at **{current_games[0][5]}**, we are playing against **{current_games[0][2]}** wearing **{current_games[0][6]}** at **{current_games[0][4]}**. "

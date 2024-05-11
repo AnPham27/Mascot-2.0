@@ -17,23 +17,6 @@ def run():
     async def on_ready():
         print(f"{bot.user} is Ready")
         logger.info(f"User: {bot.user} (ID: {bot.user.id})")
-
-    # #!upc day month date team num - (no @everyone) responds to same text channel with respective date and team number
-    # @bot.command(
-    #         help="I am still under development!",
-    #         description="Posting the schedule based on the league division, date, and team number",
-    #         brief="Posts the schedule",
-    #         hidden=True
-    # )
-    # async def upc(ctx, division, day, month, date, team_num):
-    #     """ 
-    #     Upcoming schedule to same channel: 
-    #     FORMAT: !upc c2 Thursday, July 5 4
-    #     """
-        
-    #     message = get_upcoming_schedule(division, day, month, date, team_num)
-        
-    #     await ctx.send(message)
         
     @bot.command(
             help="I am still under development!",
@@ -81,6 +64,7 @@ def run():
         FORMAT: !st c2
         """
         table, message = standings(division.lower().replace(' ', ''))
+        
         await ctx.send(table)
         await ctx.send(message)
 
