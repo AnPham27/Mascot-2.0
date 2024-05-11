@@ -154,9 +154,12 @@ def standings(division):
         
         next_element = i.next_sibling.strip()
         #print(next_element)
-        if "**" in next_element:
-            waiting = True
 
+    updated = soup.find(class_="bottomLine").find_all("p")
+    for msg in updated:
+        if "**" in msg.text:
+            waiting = True         
+    
     print(names)
     scores = soup.find("tbody").find_all("td", class_="text-center")
 
@@ -210,7 +213,7 @@ def standings(division):
             place += 1
         chart += "```"
         if waiting == True:
-            message+= "Please note: Not all scores have been submitted at this moment. Check again later!"
+            message += "Please note: Not all scores have been submitted at this moment. Check again later!"
 
     #   Win  Loss  Tie  Points count = 4
     else:
