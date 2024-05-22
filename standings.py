@@ -174,36 +174,7 @@ def standings(division):
     result = []
     print("Count: ", count)
 
-    # 	Win	 Loss  Tie	Points	Win Pct	 Spirit Avg count = 6 
-    if count == 6: 
-        for i in range(len(names)):
-            result.append(names[i])
-            #[TEAM NAME, ]
-            for j in range(count):
-            
-                result.append(points[indices])
-
-                indices += 1
-            row.append(result)
-            result=[] 
-
-        labels = ["PL", "TEAM", "W", "L", "SPRT"]
-        #headers = ['PL', 'TEAM', 'W', 'L', 'POINT']
-
-        header_format = '{:<3} {:<17} {:<2} {:<2} {:<6}'
-
-        chart = f"```\n{header_format.format(*labels)}\n"
-        
-        place = 1
-            #[team , W, L, T, P]
-        for r in row:
-            chart += f"{place:<3} {r[0][:17].strip():<17} {r[1]:<2} {r[2]:<2} {r[6][:4]:<6}\n"
-            place += 1
-        chart += "```"
-        
-        message = "Please note that not all scores have been submitted at this moment. Check again later!"
-
-    elif count == 5:
+    if count == 5:
         for i in range(len(names)):
             result.append(names[i])
             #[TEAM NAME, ]
@@ -232,6 +203,36 @@ def standings(division):
         message = "Please note that not all scores have been submitted at this moment. Check again later!"
 
     #   Win  Loss  Tie  Points count = 4
+
+        # 	Win	 Loss  Tie	Points	Win Pct	 Spirit Avg count = 6 
+    elif count == 6: 
+        for i in range(len(names)):
+            result.append(names[i])
+            #[TEAM NAME, ]
+            for j in range(count):
+            
+                result.append(points[indices])
+
+                indices += 1
+            row.append(result)
+            result=[] 
+
+        labels = ["PL", "TEAM", "W", "L", "SPRT"]
+        #headers = ['PL', 'TEAM', 'W', 'L', 'POINT']
+
+        header_format = '{:<3} {:<17} {:<2} {:<2} {:<6}'
+
+        chart = f"```\n{header_format.format(*labels)}\n"
+        
+        place = 1
+            #[team , W, L, T, P]
+        for r in row:
+            chart += f"{place:<3} {r[0][:17].strip():<17} {r[1]:<2} {r[2]:<2} {r[6][:4]:<6}\n"
+            place += 1
+        chart += "```"
+        
+        message = "Please note that not all scores have been submitted at this moment. Check again later!"
+        
     else:
         labels = ["PL", "TEAM", "W", "L", "PT"]
         for i in range(len(names)):
