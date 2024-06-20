@@ -392,10 +392,10 @@ def get_upcoming_schedule(division, day, month, date, team_num):
     print(days)
     
     #need to set playoff dates
-    playoff = ["Monday, June 24", "Tuesday, June 25", "Wednesday, June 26", "Thursday, June 27"]
+    playoff = ["Mon, Jun 24", "Tue, Jun 25", "Wed, Jun 26", "Thu, Jun 27"]
 
     if today_date in playoff:
-        return(f"We have playoffs that day, and there is no schedule for that yet.")
+        return(f"We have playoffs that day. Please check the schedule! (sorry i haven't had time to develop this lol)")
     elif today_date in days:
         print("yes")
     else:
