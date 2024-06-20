@@ -48,7 +48,12 @@ def play(division, day, month, date):
 
     today_date = f"{day} {month} {date}"
     current_games = find_day(today_date, soup)
+    
+    #need to set playoff dates
+    playoff = ["Mon, Jun 24", "Tue, Jun 25", "Wed, Jun 26", "Thu, Jun 27"]
 
+    if today_date in playoff:
+        return(f"We have playoffs that day. Please check the schedule! (sorry i haven't had time to develop this lol)")
 
     #['1', 'Thu, May 09', 'Frizzie McGuire(0-0-0) (0.00)', '', 'Margaret # 7', '6:30 PM', 'Light']
 
