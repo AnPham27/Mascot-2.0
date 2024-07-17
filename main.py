@@ -99,8 +99,8 @@ def run():
         """
         message = attendance()
         new_msg = await ctx.send(message)
-        new_msg.add_reaction('👍')
-        new_msg.add_reaction('👎')
+        await new_msg.add_reaction('👍')
+        await new_msg.add_reaction('👎')
                             
 
     bot.run(settings.DISCORD_API_SECRET)
