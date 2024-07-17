@@ -98,9 +98,9 @@ def run():
         Format: !at
         """
         message = attendance()
-        await ctx.send(message)
-        message.add_reaction('👍')
-        message.add_reaction('👎')
+        new_msg = await ctx.send(message)
+        new_msg.add_reaction('👍')
+        new_msg.add_reaction('👎')
                             
 
     bot.run(settings.DISCORD_API_SECRET)
