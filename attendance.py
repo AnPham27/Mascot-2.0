@@ -1,8 +1,8 @@
 
 def attendance():
 
-    message = "**Attendance Check**\n"
-    message += "👍 = attending"
+    message = "@everyone **Attendance Check**\n"
+    message += "👍 = attending\n"
     message += "👎 = not attending"
     
 
