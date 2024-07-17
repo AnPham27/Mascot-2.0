@@ -5,6 +5,7 @@ from schedule import get_upcoming_schedule
 from standings import standings
 from field_status import status
 from schedule_scraper import play
+from attendance import attendance
 
 logger = settings.logging.getLogger("bot")
 
@@ -84,6 +85,24 @@ def run():
         await ctx.send(message)
 
   
+    @bot.command(
+        help="I am still under development",
+        description="Taking attendance for this week's games",
+        brief="Attendance check",
+        hidden=True
+    )
+    async def at(ctx):
+        """
+        Attendance check with emoji selection
+        👍 or 👎
+        Format: !at
+        """
+        message = attendance()
+        await ctx.send(message)
+        message.add_reaction('👍')
+        message.add_reaction('👎')
+                            
+
     bot.run(settings.DISCORD_API_SECRET)
     #bot.run("") #for quick testing
 
