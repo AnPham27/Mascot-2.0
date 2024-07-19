@@ -1,7 +1,6 @@
 import settings
 import discord 
 from discord.ext import commands
-from schedule import get_upcoming_schedule
 from standings import standings
 from field_status import status
 from schedule_scraper import play
