@@ -15,7 +15,7 @@ def status():
     source.raise_for_status()
     soup = BeautifulSoup(source.text, 'html.parser')
 
-    statement = (soup.find(id="primary", class_="site-content").find_next("p")).find_next_sibling("p")
+    statement = soup.find(id="primary", class_="site-content").find("h2").find("strong").get_text()
     
     stat = []
     sent = ""
