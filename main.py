@@ -50,6 +50,16 @@ def run():
         
         await ctx.send("@everyone " + message)
 
+        table, message = standings(division.lower().replace(' ', ''))
+    
+        await ctx.send(table)
+        await ctx.send(message)
+
+        message = attendance()
+        new_msg = await ctx.send(message)
+        
+        await new_msg.add_reaction('👍')
+        await new_msg.add_reaction('👎')
 
     #!st division - (no @everyone) responds to same text channel with current standings     
     @bot.command(
