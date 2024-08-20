@@ -22,7 +22,7 @@ def find_day(day, soup):
             current_games.append(game)
                 
 
-    #print(current_games)
+    print(current_games)
     return current_games
 
 def play(division, day, month, date):
@@ -46,8 +46,8 @@ def play(division, day, month, date):
         date = '0' + date
         print(date)
     
-
     today_date = f"{day} {month} {date}"
+    print(today_date)
     current_games = find_day(today_date, soup)
     
     #need to set playoff dates
@@ -55,11 +55,10 @@ def play(division, day, month, date):
 
     if today_date in playoff:
         return(f"We have playoffs that day. Please check the schedule! (sorry i haven't had time to develop this lol)")
-    elif today_date not in current_games:
-        return(f"Please double check the date - seems like it is not in the list of current games.")
-
+    elif len(current_games) == 0:
+        return(f"Please double check the date - seems like it's not in the list of current games.")
     #['1', 'Thu, May 09', 'Frizzie McGuire(0-0-0) (0.00)', '', 'Margaret # 7', '6:30 PM', 'Light']
-
+    
     message  = f"{today_date}: Our first game at **{current_games[0][5]}**, we are playing against **{current_games[0][2]}** wearing **{current_games[0][6]}** at **{current_games[0][4]}**. "
     message += f"For our second game at **{current_games[1][5]}**, we are playing against **{current_games[1][2]}** wearing **{current_games[1][6]}** at **{current_games[1][4]}**. "
 
