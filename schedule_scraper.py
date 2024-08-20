@@ -33,19 +33,18 @@ def play(division, day, month, date):
     dictionary = dict(zip(divisions, url_id))
 
     url = "https://data.perpetualmotion.org/web-app/team/" + str(dictionary[division])
-    
 
     try:
-       
         source = requests.get(url)
-        
         source.raise_for_status()
-
         soup = BeautifulSoup(source.text, 'html.parser')
 
     except Exception as e:
         print(e)
 
+    if len(day) == 1: 
+        day = '0' + day
+        
     today_date = f"{day} {month} {date}"
     current_games = find_day(today_date, soup)
     
@@ -54,6 +53,8 @@ def play(division, day, month, date):
 
     if today_date in playoff:
         return(f"We have playoffs that day. Please check the schedule! (sorry i haven't had time to develop this lol)")
+    elif today_date not in current_games:
+        return(f"Please double check the date - seems like it is not in the list of current games.")
 
     #['1', 'Thu, May 09', 'Frizzie McGuire(0-0-0) (0.00)', '', 'Margaret # 7', '6:30 PM', 'Light']
 
