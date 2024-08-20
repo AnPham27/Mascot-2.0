@@ -45,7 +45,7 @@ def play(division, day, month, date):
     if len(date) == 1: 
         date = '0' + date
         print(date)
-    print(today_date)
+    
 
     today_date = f"{day} {month} {date}"
     current_games = find_day(today_date, soup)
