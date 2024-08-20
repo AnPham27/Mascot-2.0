@@ -44,6 +44,10 @@ def run():
         """ 
         Upcoming schedule to same channel: 
         FORMAT: !everyone c2 Thu, May 09
+        division = c2 
+        day = Thu
+        month = May
+        date = 09
         """
         
         message = play(division, day, month, date)

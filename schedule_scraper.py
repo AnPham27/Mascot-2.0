@@ -42,8 +42,8 @@ def play(division, day, month, date):
     except Exception as e:
         print(e)
 
-    if len(day) == 1: 
-        day = '0' + day
+    if len(date) == 1: 
+        date = '0' + date
         
     today_date = f"{day} {month} {date}"
     current_games = find_day(today_date, soup)
