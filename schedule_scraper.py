@@ -15,14 +15,14 @@ def find_day(day, soup):
     for i in range(0, len(dates), 7):
         all_games.append(days[i:i+7])   
 
-    print(all_games)
+    #print(all_games)
     current_games = []
     for game in all_games:
         if day in game:
             current_games.append(game)
                 
 
-    print(current_games)
+    #print(current_games)
     return current_games
 
 def play(division, day, month, date):
@@ -41,10 +41,12 @@ def play(division, day, month, date):
 
     except Exception as e:
         print(e)
-
+    
     if len(date) == 1: 
         date = '0' + date
-        
+        print(date)
+    print(today_date)
+
     today_date = f"{day} {month} {date}"
     current_games = find_day(today_date, soup)
     
