@@ -28,7 +28,7 @@ def find_day(day, soup):
 def play(division, day, month, date):
 
     divisions = ["ct", "c2"]
-    url_id = [13552, 13402]
+    url_id = [13959, 13952]
     
     dictionary = dict(zip(divisions, url_id))
 
@@ -51,7 +51,7 @@ def play(division, day, month, date):
     current_games = find_day(today_date, soup)
     
     #need to set playoff dates
-    playoff = ["Tue, Aug 20", "Thu, Aug 22"]
+    playoff = ["Tue, Oct 1", "Thu, Oct 3"]
 
     if today_date in playoff:
         return(f"We have playoffs that day. Please check the schedule! (sorry i haven't had time to develop this lol)")
