@@ -5,6 +5,7 @@ from standings import standings
 from field_status import status
 from schedule_scraper import play
 from attendance import attendance
+from commands import list_commands
 
 logger = settings.logging.getLogger("bot")
 
@@ -115,6 +116,18 @@ def run():
         await new_msg.add_reaction('👍')
         await new_msg.add_reaction('👎')
                             
+    @bot.command(
+        help="I am still under development",
+        description="lists all the current commands of this bot",
+        brief="Command list",
+        hidden=True
+    )
+    async def command(ctx):
+        """
+        List all the commands
+        """
+        message = list_commands()
+        await ctx.send(message)
 
     bot.run(settings.DISCORD_API_SECRET)
     #bot.run("") #for quick testing
