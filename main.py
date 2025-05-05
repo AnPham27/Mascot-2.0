@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 from standings import standings
 from field_status import status
-from schedule_scraper import play
+from schedule_scraper import play_short
 from attendance import attendance
 from commands import list_commands
 
@@ -25,13 +25,13 @@ def run():
             brief="Posts the schedule",
             hidden=True
     )
-    async def game(ctx, division, day, month, date):
+    async def game(ctx, division, mmdd):
         """ 
         Upcoming schedule to same channel: 
-        FORMAT: !game c2 Thu, May 09
+        FORMAT: !game c2 mmdd
         """
         
-        message = play(division, day, month, date)
+        message = play_short(division, mmdd)
         
         await ctx.send(message)
     
@@ -41,17 +41,14 @@ def run():
             brief="Posts the schedule",
             hidden=True
     )
-    async def everyone(ctx, division, day, month, date):
+    async def e(ctx, division, mmdd):
         """ 
         Upcoming schedule to same channel: 
-        FORMAT: !everyone c2 Thu, May 09
-        division = c2 
-        day = Thu
-        month = May
-        date = 09
+        FORMAT: !e c2 0508 
+        for May 08, c2 league
         """
         
-        message = play(division, day, month, date)
+        message = play_short(division, mmdd)
         
         await ctx.send("@everyone " + message)
 

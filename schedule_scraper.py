@@ -1,6 +1,25 @@
 import requests
 from bs4 import BeautifulSoup
-from datetime import date
+from datetime import datetime
+
+
+def play_short(division, mmdd):
+    if len(mmdd) == 3:
+        mmdd = '0' + mmdd  # e.g. 829 → 0829
+
+    try:
+        current_year = datetime.now().year
+        dt = datetime.strptime(f"{current_year}{mmdd}", "%Y%m%d")  # use current year
+       
+        # Format exactly like "Thu, May 08"
+        full_date_str = dt.strftime("%a, %b %d")  # Thu, May 08
+        print(full_date_str)
+        day_str, month_str, day_num = full_date_str.split()    # "Thu,", "May", "08"
+
+        return play(division, day_str, month_str, day_num)
+    except ValueError:
+        return "Invalid date format. Use MMDD (e.g. 0508 for May 8)."
+    
 
 def find_day(day, soup):
     dates = soup.find("table", class_="table table-condensed table-striped f-small").find_all("td")
@@ -28,7 +47,7 @@ def find_day(day, soup):
 def play(division, day, month, date):
 
     divisions = ["ct", "c2"]
-    url_id = [13959, 13952]
+    url_id = [14850, 14668]
     
     dictionary = dict(zip(divisions, url_id))
 
@@ -51,7 +70,7 @@ def play(division, day, month, date):
     current_games = find_day(today_date, soup)
     
     #need to set playoff dates
-    playoff = ["Tue, Oct 1", "Thu, Oct 3"]
+    playoff = ["Tue, Jun 24", "Thu, Jun 26"]
 
     if today_date in playoff:
         return(f"We have playoffs that day. Please check the schedule! (sorry i haven't had time to develop this lol)")
