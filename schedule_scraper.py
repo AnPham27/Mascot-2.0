@@ -5,7 +5,7 @@ from datetime import datetime
 
 def play_short(division, mmdd):
     if len(mmdd) == 3:
-        mmdd = '0' + mmdd  # e.g. 829 → 0829
+        mmdd = '0' + mmdd  #829 = 0829
 
     try:
         current_year = datetime.now().year
@@ -46,8 +46,8 @@ def find_day(day, soup):
 
 def play(division, day, month, date):
 
-    divisions = ["ct", "c2"]
-    url_id = [14850, 14668]
+    divisions = ["ct", "c2", "b"]
+    url_id = [14850, 14668, 15192]
     
     dictionary = dict(zip(divisions, url_id))
 
