@@ -124,8 +124,8 @@ def header_display(count):
 
 
 def standings(division):
-    divisions = ["ct", "c2", "b"]
-    url_id = [2312, 2330, 2323]
+    divisions = ["ct", "c1", "cw"]
+    url_id = [2347, 2364, 2358]
 
     dictionary = dict(zip(divisions, url_id))
 
