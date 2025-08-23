@@ -47,7 +47,7 @@ def find_day(day, soup):
 def play(division, day, month, date):
 
     divisions = ["ct", "c1", "cw"]
-    url_id = [15468, 15434, 15632]
+    url_id = [16039, 15990, 16109]
     
     dictionary = dict(zip(divisions, url_id))
 

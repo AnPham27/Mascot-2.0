@@ -3,28 +3,23 @@ from bs4 import BeautifulSoup
 
 def status():
     
-    # try:
-    #     source = requests.get("https://guelph.ca/seasonal/sports-field-status/")
-    #     source.raise_for_status()
-    #     soup = BeautifulSoup(source.text, 'html.parser')
-    # except Exception as e:
-    #     print(e)
+    url = "https://guelph.ca/seasonal/sports-field-status/"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                      "(KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": "https://www.google.com/"
+    }
 
-    headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"}
-    source = requests.get("https://guelph.ca/seasonal/sports-field-status/", headers=headers)
+    source = requests.get(url, headers=headers)
     source.raise_for_status()
-    soup = BeautifulSoup(source.text, 'html.parser')
 
-    statement = soup.find(id="primary", class_="site-content").find_all("h2")
-    
-    stat = []
-    sent = ""
+    soup = BeautifulSoup(source.text, "html.parser")
+    status_tag = soup.find("h2", id="h-sportsfields-are-open")
 
-    for i in statement:
-        sent += i.text
-        if i.text == '.': 
-            break
-
-    sent = sent.replace("<strong>", "**").replace("</strong>", "**")
-    return sent
+    if status_tag:
+        return status_tag.get_text(strip=True)
+    else:
+        return "Could not find field status"
     
