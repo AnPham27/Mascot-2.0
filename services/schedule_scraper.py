@@ -11,8 +11,13 @@ def play_short(division, mmdd):
 
     try:
         current_year = datetime.now().year
-        dt = datetime.strptime(f"{current_year}{mmdd}", "%Y%m%d")  # use current year
-       
+        dt = datetime.strptime(f"{current_year}{mmdd}", "%Y%m%d")
+
+        # if the date already passed this year, assume it's next year
+        today = datetime.now()
+        if dt < today and dt.month < today.month:
+            dt = datetime.strptime(f"{current_year + 1}{mmdd}", "%Y%m%d")
+            
         # Format exactly like "Thu, May 08"
         full_date_str = dt.strftime("%a, %b %d")  # Thu, May 08
         #print(full_date_str)
@@ -29,8 +34,13 @@ def play_short_embed(division, mmdd):
 
     try:
         current_year = datetime.now().year
-        dt = datetime.strptime(f"{current_year}{mmdd}", "%Y%m%d")  # use current year
-       
+        dt = datetime.strptime(f"{current_year}{mmdd}", "%Y%m%d")
+
+        # if the date already passed this year, assume it's next year
+        today = datetime.now()
+        if dt < today and dt.month < today.month:
+            dt = datetime.strptime(f"{current_year + 1}{mmdd}", "%Y%m%d")
+
         # Format exactly like "Thu, May 08"
         full_date_str = dt.strftime("%a, %b %d")  # Thu, May 08
         #print(full_date_str)
@@ -145,9 +155,6 @@ def play_embed(division, day, month, date):
     holidays = ["Sun, Dec 21", "Sun, Dec 28"]
     current_games = find_day(today_date, soup)
 
-    if not current_games:
-        return None
-    
     #print(len(current_games))
 
     print(today_date)
