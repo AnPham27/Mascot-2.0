@@ -2,10 +2,10 @@ import os
 import logging
 from logging.config import dictConfig
 
-
+# --- Secrets ---
 DISCORD_API_SECRET = os.getenv("DISCORD_API_TOKEN")
 
-
+# --- Logging ---
 LOGGING_CONFIG = {
     "version": 1,
     "disabled_existing_loggers": False,
@@ -43,3 +43,7 @@ LOGGING_CONFIG = {
         },
     },
 }
+
+# --- Apply logging configuration ---
+os.makedirs("logs", exist_ok=True)
+dictConfig(LOGGING_CONFIG)
