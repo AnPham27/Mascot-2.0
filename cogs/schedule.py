@@ -23,10 +23,7 @@ class Schedule(commands.Cog):
     
         embed = play_short_embed(division, mmdd) 
 
-        # Case 1 — embed is not a game (holiday, playoff, or invalid date)
-        # Those embeds include a specific color and descriptive text.
- 
-        # Check if this embed is a "special" one by scanning its description
+        #check if this embed is a "special" one by scanning its description
         if embed.description and any(
             phrase in embed.description.lower()
             for phrase in ["no games", "playoffs", "double check the date"]
@@ -68,7 +65,7 @@ class Schedule(commands.Cog):
             self.attendance_data[message.id] = {
                 "attending": set(),
                 "not_attending": set(),
-                "user_emojis": {}  # user_name -> set of emojis
+                "user_emojis": {} 
             }
 
         except Exception as e:
@@ -129,6 +126,7 @@ class Schedule(commands.Cog):
                 embed.set_field_at(i, name="❌ Not Attending", value=not_attending_list, inline=False)
 
         await message.edit(embed=embed)
+
     @commands.command(
         name="e",
         help="Posts the schedule, standings, and attendance check with @everyone mention.",

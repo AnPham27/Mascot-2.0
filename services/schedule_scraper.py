@@ -2,8 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 import discord
-from utils.embed_formatter import schedule_embed
 from utils.embed_formatter import sch_embed
+from utils.config_manager import load_config
 
 def play_short(division, mmdd):
     if len(mmdd) == 3:
@@ -128,7 +128,11 @@ def play_embed(division, day, month, date):
 
     today_date = f"{day} {month} {date}"
 
-    url_id_map = {"b2": 16259, "ct": 16039}
+    config = load_config()
+    #url_id_map = {"b2": 16259, "ct": 16039}
+    url_id_map = config.get("divisions", {})
+    playoff = config.get("playoff_dates", [])
+    holidays = config.get("holidays", [])
     url = f"https://data.perpetualmotion.org/web-app/team/{url_id_map[division]}"
 
 
@@ -151,16 +155,17 @@ def play_embed(division, day, month, date):
     #print(len(current_games))
     
     #need to set playoff dates
-    playoff = ["Sun, Jan 11"]
-    holidays = ["Sun, Dec 21", "Sun, Dec 28"]
+    #playoff = ["Sun, Jan 11"]
+    #holidays = ["Sun, Dec 21", "Sun, Dec 28"]
     current_games = find_day(today_date, soup)
 
     #print(len(current_games))
 
     print(today_date)
 
+    #playoff check
     if today_date in playoff:
-        print("test - playoff")
+        
         embed = discord.Embed(
             title=today_date,
             description="We have playoffs that day. Please check the schedule! (sorry i haven't had time to develop this lol)",
@@ -168,8 +173,9 @@ def play_embed(division, day, month, date):
         )
         return embed
 
+    #holiday check
     elif today_date in holidays:
-        print("test - holiday")
+        
         embed = discord.Embed(
             title=today_date,
             description="No games! Enjoy the holidays!",
@@ -177,6 +183,7 @@ def play_embed(division, day, month, date):
         )
         return embed
 
+    #incorrect date? no games
     if not current_games:
         embed = discord.Embed(
             title=today_date,
@@ -185,7 +192,7 @@ def play_embed(division, day, month, date):
         )
         return embed
 
-    # Normal game logic below
+    # Normal game logic
     if len(current_games) % 2 == 1:  # one game
         matches = [{
             "time": current_games[0][5],

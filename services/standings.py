@@ -1,15 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
+from utils.config_manager import load_config
 
 
 def standings(division):
-    divisions = ["b2", "ct"]
-    url_id = [2394, 2377]
+    #divisions = ["b2", "ct"]
+    #url_id = [2394, 2377]
+    #dictionary = dict(zip())
+    config = load_config()
+    url_id_map = config.get("standings", {})
 
-    dictionary = dict(zip(divisions, url_id))
-
-    url = "https://data.perpetualmotion.org/web-app/standings/" + str(dictionary[division])
-
+    url = f"https://data.perpetualmotion.org/web-app/standings/{url_id_map[division]}"
+    
     try:
         source = requests.get(url)
         source.raise_for_status()
