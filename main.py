@@ -9,7 +9,8 @@ logger = settings.logging.getLogger("bot")
 # Running the bot
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
-
+# remove the default help command to use my own
+bot.remove_command("help")
 
 @bot.event
 async def on_ready():

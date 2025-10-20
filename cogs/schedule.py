@@ -13,25 +13,6 @@ class Schedule(commands.Cog):
         self.bot = bot
         self.attendance_data = {}
 
-    @commands.command(
-            name="game_embed",
-            help="Posts the schedule as an embed for the given division and date",
-            description="Exmaple: !game_embed b2 1026"
-    )
-    async def game_embed(self, ctx, division: str, mmdd: str):
-        """ Sends a game schedule as an embed for the given division and date"""
-    
-        embed = play_short_embed(division, mmdd) 
-
-        #check if this embed is a "special" one by scanning its description
-        if embed.description and any(
-            phrase in embed.description.lower()
-            for phrase in ["no games", "playoffs", "double check the date"]
-        ):
-            # Just send the info embed — no attendance reactions
-            await ctx.send(embed=embed)
-            return
-
 
     @commands.command(
         name="game",
@@ -52,7 +33,6 @@ class Schedule(commands.Cog):
                 return
 
             #Add attendance fields
-            embed.add_field(name="Attendance Check", value="", inline=False)
             embed.add_field(name="✅ Attending", value="(none)", inline=False)
             embed.add_field(name="❌ Not Attending", value="(none)", inline=False)
             
@@ -128,36 +108,6 @@ class Schedule(commands.Cog):
         await message.edit(embed=embed)
 
     @commands.command(
-        name="e",
-        help="Posts the schedule, standings, and attendance check with @everyone mention.",
-        description="Example !e c2 0508",
-    )
-    async def e(self, ctx, division:str, mmdd:str):
-        """
-        Posts schedule, standings, and attendance, pinging everyone
-        FORMAT: !e division mmdd
-        """
-        try:
-            #schedule
-            message = play_short(division, mmdd)
-            await ctx.send("@everyone " + message)
-
-            #standings
-            table, message = standings(division.lower().replace(' ', ''))
-            await ctx.send(table)
-            await ctx.send(message)
-
-            #attendance
-            message = attendance()
-            new_msg = await ctx.send(message)
-            await new_msg.add_reaction("✅")
-            await new_msg.add_reaction("❌")
-
-
-        except Exception as e:
-            print(f"Error in !e: {e}")
-
-    @commands.command(
         name="st",
         help="Posts the current standings for division",
         description="Example: !st c2 (standings for C2 division)",
@@ -172,7 +122,34 @@ class Schedule(commands.Cog):
         except Exception as e:
             print(f"Error in !st: {e}")
 
+    @commands.command(name="at", help="Attendance check", description="Example: !at")
+    async def at(self, ctx):
+        """Attendance check"""
+        try:
+            
+            embed = discord.Embed(
+                title="Attendance check",
+                color=0x93e9be
+            )
+            
+            #Add attendance fields
+            embed.add_field(name="✅ Attending", value="(none)", inline=False)
+            embed.add_field(name="❌ Not Attending", value="(none)", inline=False)
+            
+            #send embed and add reactions
+            message = await ctx.send(embed=embed)
+            await message.add_reaction("✅")
+            await message.add_reaction("❌")
 
+            #initialize attendance tracking
+            self.attendance_data[message.id] = {
+                "attending": set(),
+                "not_attending": set(),
+                "user_emojis": {} 
+            }
+
+        except Exception as e:
+            print(f"Error in !game: {e}")
 
 async def setup(bot):
     await bot.add_cog(Schedule(bot))

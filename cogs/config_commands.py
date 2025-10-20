@@ -78,7 +78,7 @@ class ConfigCommands(commands.Cog):
 
         if not playoffs:
             await ctx.send("No playoff dates set")
-        
+            return
         await ctx.send("**Playoff Dates:**\n" + "n".join(playoffs))
     
 
@@ -106,5 +106,24 @@ class ConfigCommands(commands.Cog):
             return
         await ctx.send("**Holidays:**\n"+ "\n".join(holidays))
 
+
+    @commands.command(name="clear")
+    @commands.has_permissions(administrator=True)
+    async def clear(self, ctx):
+        """Clears all stored configuration data (divisions, playoffs, holidays, standings)"""
+        default_config = {
+            "divisions": {},
+            "playoff_dates": [],
+            "holidays": [],
+            "standings": {}
+        }
+
+        save_config(default_config)
+        await ctx.send("🧹 Configuration has been cleared!")
+
+
+
+    
+    
 async def setup(bot):
     await bot.add_cog(ConfigCommands(bot))
