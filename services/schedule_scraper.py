@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import discord
 from utils.embed_formatter import sch_embed
-from utils.config_manager import load_config
+from utils.db_config import get_config_value
 
 def play_short(division, mmdd):
     if len(mmdd) == 3:
@@ -128,21 +128,25 @@ def play_embed(division, day, month, date):
 
     today_date = f"{day} {month} {date}"
 
-    config = load_config()
-    #url_id_map = {"b2": 16259, "ct": 16039}
-    url_id_map = config.get("divisions", {})
-    playoff = config.get("playoff_dates", [])
-    holidays = config.get("holidays", [])
+    url_id_map = get_config_value("divisions") or {}
+    playoff = get_config_value("playoff_dates") or []
+    holidays = get_config_value("holidays") or {}
+    if division not in url_id_map:
+        return discord.Embed(
+            title="Error",
+            description=f"❌ No team ID found for division '{division}'. Use !set_div first.",
+            color=0xd52079
+        )
+
     url = f"https://data.perpetualmotion.org/web-app/team/{url_id_map[division]}"
-
-
+    
     try:
         source = requests.get(url)
         source.raise_for_status()
         soup = BeautifulSoup(source.text, 'html.parser')
     except Exception as e:
-        print(e)
-        return None
+        return discord.Embed(title="Error", description=f"⚠️ Failed to fetch schedule: {e}", color=0xd52079)
+
     
     if len(date) == 1: 
         date = '0' + date

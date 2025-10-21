@@ -1,15 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
-from utils.config_manager import load_config
-
+from utils.db_config import get_config_value
 
 def standings(division):
     #divisions = ["b2", "ct"]
     #url_id = [2394, 2377]
     #dictionary = dict(zip())
-    config = load_config()
-    url_id_map = config.get("standings", {})
+    url_id_map = get_config_value("standings") or {}
 
+    if division not in url_id_map:
+        return f"❌ No standings URL found for division '{division}'", None
+    
     url = f"https://data.perpetualmotion.org/web-app/standings/{url_id_map[division]}"
     
     try:
@@ -20,6 +21,7 @@ def standings(division):
 
     except Exception as e:
         print(e)
+        return f"⚠️ Failed to load standings: {e}", None
 
     # table = soup.find("table", class_="activeStandings table table-condensed table-striped f-small").find_all("th")
 

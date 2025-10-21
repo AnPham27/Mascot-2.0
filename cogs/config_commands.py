@@ -1,5 +1,5 @@
 from discord.ext import commands
-from utils.config_manager import load_config, save_config
+from utils.db_config import get_config_value, set_config_value
 
 
 class ConfigCommands(commands.Cog):
@@ -14,16 +14,14 @@ class ConfigCommands(commands.Cog):
     async def set_div(self, ctx, division: str, team_id: int):
         """Set or uupdate a division's team ID"""
         #example !set_div b2 16259 OR !set_div ct 16039
-        config = load_config()
-        config["divisions"][division] = team_id
-        save_config(config)
-
+        divisions = get_config_value("divisions") or {}
+        divisions[division] = team_id
+        set_config_value("divisions", divisions)
         await ctx.send(f"✅ Division `{division}` set to team ID `{team_id}`")
 
     @commands.command(name="list_div")
     async def list_div(self, ctx):
-        config = load_config()
-        divisions = config.get("divisions", {})
+        divisions = get_config_value("divisions") or {}
         if not divisions:
             await ctx.send("No divisions configured yet.")
             return
@@ -36,22 +34,20 @@ class ConfigCommands(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def set_st(self, ctx, div: str, standings_id: int):
         """Set standings ID for division"""
-        config = load_config()
-        config["standings"][div] = standings_id
-        save_config(config)
-
+        standings = get_config_value("standings") or {}
+        standings[div] = standings_id
+        set_config_value("standings", standings)
         await ctx.send(f"✅ Standings ID for division {div} is set to {standings_id}")
 
     
     @commands.command(name="list_st")
     async def list_st(self, ctx):
         """Lists standings ID per division"""
-        config = load_config()
-        divisions = config.get("standings", {})
-        if not divisions:
+        standings = get_config_value("standings") or {}
+        if not standings:
             await ctx.send("No standings divisions configured yet.")
             return
-        formatted = "\n".join([f"**{k}** → `{v}`" for k, v in divisions.items()])
+        formatted = "\n".join([f"**{k}** → `{v}`" for k, v in standings.items()])
         await ctx.send(f"**Current standings:**\n{formatted}")
 
     #playoff dates
@@ -59,38 +55,34 @@ class ConfigCommands(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def add_playoff(self, ctx, *, date: str):
         """Add a playoff date (e.g. Sun, Jan 11)"""
-        config = load_config()
-
-        if date not in config["playoff_dates"]:
-            config["playoff_dates"].append(date)
-            save_config(config)
+        playoffs = get_config_value("playoff_dates") or []
+        if date not in playoffs:
+            playoffs.append(date)
+            set_config_value("playoff_dates", playoffs)
             await ctx.send(f"✅ Added playoff date: {date}")
-        
         else:
             await ctx.send("That playoff date already exists")
+
 
     
     @commands.command(name="list_playoffs")
     async def list_playoffs(self, ctx):
         """Lists all playoff dates"""
-        config = load_config()
-        playoffs = config.get("playoff_dates", [])
-
+        playoffs = get_config_value("playoff_dates") or []
         if not playoffs:
-            await ctx.send("No playoff dates set")
+            await ctx.send("No playoff dates set.")
             return
-        await ctx.send("**Playoff Dates:**\n" + "n".join(playoffs))
+        await ctx.send("**Playoff Dates:**\n" + "\n".join(playoffs))
     
 
     @commands.command(name="add_holiday")
     @commands.has_permissions(administrator=True)
     async def add_holiday(self, ctx, *, date: str):
         """Add a holiday date (e.g., Sun, Dec 28)"""
-        config = load_config()
-
-        if date not in config["holidays"]:
-            config["holidays"].append(date)
-            save_config(config)
+        holidays = get_config_value("holidays") or []
+        if date not in holidays:
+            holidays.append(date)
+            set_config_value("holidays", holidays)
             await ctx.send(f"✅ Added holiday: {date}")
         else:
             await ctx.send("That holiday already exists")
@@ -99,18 +91,24 @@ class ConfigCommands(commands.Cog):
     @commands.command(name="list_holidays")
     async def list_holidays(self, ctx):
         """Lists holidays"""
-        config = load_config()
-        holidays = config.get("holidays", [])
+        holidays = get_config_value("holidays") or []
         if not holidays:
             await ctx.send("No holidays set.")
             return
-        await ctx.send("**Holidays:**\n"+ "\n".join(holidays))
+        await ctx.send("**Holidays:**\n" + "\n".join(holidays))
 
 
     @commands.command(name="clear")
     @commands.has_permissions(administrator=True)
-    async def clear(self, ctx):
-        """Clears all stored configuration data (divisions, playoffs, holidays, standings)"""
+    async def clear(self, ctx, category: str = None):
+        """Clears all or specific configuration data.
+            !clear                → clears everything
+            !clear divisions      → clears only divisions
+            !clear playoffs       → clears only playoff_dates
+            !clear holidays       → clears only holidays
+            !clear standings      → clears only standings
+            """
+
         default_config = {
             "divisions": {},
             "playoff_dates": [],
@@ -118,11 +116,33 @@ class ConfigCommands(commands.Cog):
             "standings": {}
         }
 
-        save_config(default_config)
-        await ctx.send("🧹 Configuration has been cleared!")
+        if category is None:
+            #clear all
+            for key, value in default_config.items():
+                set_config_value(key, value)
+            await ctx.send("🧹 All configuration data has been cleared!")
+            return
 
+        #normalize user input
+        category = category.lower().strip()
 
+        #map possible shorthand names
+        aliases = {
+            "divs": "divisions",
+            "playoffs": "playoff_dates",
+            "holiday": "holidays",
+            "stand": "standings"
+        }
 
+        category = aliases.get(category, category)
+
+        if category not in default_config:
+            await ctx.send("⚠️ Invalid category. Please choose from: divisions, playoff_dates, holidays, standings.")
+            return
+
+        # Clear just the chosen category
+        set_config_value(category, default_config[category])
+        await ctx.send(f"✅ Cleared `{category}` configuration.")
     
     
 async def setup(bot):
