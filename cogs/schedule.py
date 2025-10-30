@@ -262,8 +262,10 @@ class Schedule(commands.Cog):
                 print(f"⚠️ Failed to fetch message {mid}: {e}")
                 continue
 
-            # --- Build attendance from live reactions ---
-            current_reactions = {str(r.emoji): [u async for u in r.users()] for r in msg.reactions}
+            current_reactions = {}
+            for r in msg.reactions:
+                users = [u async for u in r.users()]
+                current_reactions[str(r.emoji)] = users
             attending_now = {u.display_name for u in current_reactions.get("✅", []) if not u.bot}
             not_attending_now = {u.display_name for u in current_reactions.get("❌", []) if not u.bot}
 
