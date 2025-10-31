@@ -374,6 +374,25 @@ class Schedule(commands.Cog):
 
         await ctx.send(f"✅ Rebuilt attendance for message `{message.id}` in `{channel.name}`.")
         print(f"✅ Successfully rebuilt attendance for message {message.id} in {channel.name}.")
+        
+    @commands.command(name="check_attendance_data")
+    async def check_attendance_data(self, ctx):
+        from utils.db_config import get_config_value
 
+        data = get_config_value("attendance_data")
+
+        def has_sets(obj):
+            if isinstance(obj, set):
+                return True
+            elif isinstance(obj, dict):
+                return any(has_sets(v) for v in obj.values())
+            elif isinstance(obj, list):
+                return any(has_sets(i) for i in obj)
+            return False
+
+        if has_sets(data):
+            await ctx.send("⚠️ Found sets inside attendance_data — you should re-save it!")
+        else:
+            await ctx.send("✅ No sets found — data is clean.")
 async def setup(bot):
     await bot.add_cog(Schedule(bot))
