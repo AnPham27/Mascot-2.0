@@ -46,10 +46,10 @@ def sch_embed(title: str, matches: list):
     des_lines = []
     for idx, match in enumerate(matches, start=1):
         des_lines.append(f"**Game {idx}**")
-        des_lines.append(f"**Time:** {match['time']}")
-        des_lines.append(f"**Location:** {match['location']}")
-        des_lines.append(f"**Colour:** {match['colour']}")
-        des_lines.append(f"**Opponent:** {match['opponent']}")
+        des_lines.append(f"**Time:** {' '.join(str(match['time']).split())}")
+        des_lines.append(f"**Location:** {' '.join(str(match['location']).split())}")
+        des_lines.append(f"**Colour:** {' '.join(str(match['colour']).split())}")
+        des_lines.append(f"**Opponent:** {' '.join(str(match['opponent']).split())}")
         des_lines.append("")  # blank line between games
 
     embed.description = "\n".join(des_lines)
